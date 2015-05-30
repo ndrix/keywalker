@@ -170,12 +170,13 @@ def parallelSequence(num, len, dir, jump, shift = false, offset_x = 0, offset_y 
   end
 end
 
+# zigzag: this does a sequence, but reverses the 2nd
 def zigzag(num, len, dir, jump, shift = false, offset_x = 0, offset_y = 0)
   ret = ""
   start = [offset_x, offset_y]
   num.times do |idx|
     r = seq(start[0], start[1], len, dir)
-    r.reverse! if idx % 2 == 0 # the opposite dir is a reverse
+    r.reverse! if idx % 2 == 1 # the opposite dir is a reverse
     ret += r
     start[0] += jumpKey(jump)[0]
     start[1] += jumpKey(jump)[1]
@@ -191,7 +192,7 @@ def zigzag(num, len, dir, jump, shift = false, offset_x = 0, offset_y = 0)
       possibilities.each do |poss|
         @shifton = poss.eql?('1')
         r = seq(start[0], start[1], len, dir)
-        r.reverse! if n % 2 == 0 # the opposite dir is a reverse
+        r.reverse! if n % 2 == 1 # the opposite dir is a reverse
         ret += r
         start[0] += jumpKey(jump)[0]
         start[1] += jumpKey(jump)[1]
@@ -257,13 +258,17 @@ maxlen = [ 8, 8, 4, 4, 4, 4 ]
 for dir in dirs do 
   puts "## -- #{dir} --"
   for i in 0..maxlen[dir] do
-    parallelSequence(3, 4, dir, turnClockWise(dir), true, 0, i) ;
-    parallelSequence(3, 4, dir, turnCounterClockWise(dir), true, 0, i) ;
+    #parallelSequence(3, 4, dir, turnClockWise(dir), true, 0, i) ;
+    #parallelSequence(3, 4, dir, turnCounterClockWise(dir), true, 0, i) ;
   end # i
 end # dir in dirs
 
+# normal sequences
 for i in 0..8 do
   parallelSequence(3, 4, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, true, 0, i) ;
+end
+for i in 0..6 do
+  parallelSequence(3, 4, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, true, 1, i) ;
 end
 for i in 0..8 do
   parallelSequence(3, 4, DIR_DIAGONAL_RIGHT_DOWN, DIR_LEFT_TO_RIGHT, true,  0, i) ;
@@ -271,22 +276,21 @@ end
 for i in 0..6 do
   parallelSequence(3, 4, DIR_DIAGONAL_RIGHT_UP, DIR_LEFT_TO_RIGHT, true,  3, i) ;
 end
-for i in 4..9 do
+for i in 3..9 do
   parallelSequence(3, 4, DIR_DIAGONAL_LEFT_DOWN, DIR_LEFT_TO_RIGHT, true,  0, i) ;
 end
-# exit 
-
-
 for i in 0..7 do
   parallelSequence(3, 4, DIR_DIAGONAL_LEFT_UP, DIR_LEFT_TO_RIGHT, true, 3, i) ;
 end
 
-for i in 0..6 do
-  zigzag(3, 4, DIR_DIAGONAL_RIGHT_UP, DIR_LEFT_TO_RIGHT, true, 3, i) ;
-end
 puts "----------zigzag--------------"
+puts "------=== normal start ==-----------"
 for i in 0..8 do
   zigzag(3, 4, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, true, 0, i) ;
+end
+puts "------=== normal end ==-----------"
+for i in 0..6 do
+  zigzag(3, 4, DIR_DIAGONAL_RIGHT_UP, DIR_LEFT_TO_RIGHT, true, 3, i) ;
 end
 
 
