@@ -36,7 +36,7 @@ opts = GetoptLong.new(
 )
 
 @minlen = 1
-@maxlen = 100
+@maxlen = 10
 @has_digits = false
 @has_special = false
 @has_upper = false
@@ -50,9 +50,13 @@ opts.each do |opt, arg|
       displayHelp()
       exit
     when '--min'
-      @minlen = arg
+      @minlen = arg.to_i
     when '--max'
-      @maxlen = arg
+      @maxlen = arg.to_i
+    when '--range'
+      r = arg.split("-")
+      @minlen = r[0].to_i || @minlen
+      @maxlen = r[1].to_i || @maxlen
     when '--shift'
       @useshift = true
     when '--upper'
@@ -64,6 +68,22 @@ opts.each do |opt, arg|
   end
 end
 
+if @maxlen < @minlen
+  puts "Minimum length should be less or equal to maximum length"
+  exit
+end
+
+# print a summary
+
+puts "##                        _O/"
+puts "##   KeyWalker v1.0         \\"
+puts "##   by @ndrix              /\\_"
+puts "## _________________________\\_____"
+if @maxlen == @minlen
+  puts "## of exactly #{@maxlen} characters"
+else
+  puts "## generating passwords between #{@minlen} and #{@maxlen} characters"
+end
 
 # all ok, munch some pw's
 SHIFT = 4
@@ -79,13 +99,13 @@ DIR_DIAGONAL_LEFT_UP     = 5
 @kb = [] 
 # us keyboard layout
 @kb << %w( 1 2 3 4 5 6 7 8 9 0 - = )
-@kb <<  %w( q w e r t y u i o p [ ] \\ )
-@kb <<   %w( a s d f g h j k l ; ')
-@kb <<    %w( z x c v b n m , . / )
+@kb << %w( q w e r t y u i o p [ ] \\ )
+@kb << %w( a s d f g h j k l ; ')
+@kb << %w( z x c v b n m , . / )
 @kb << %w( ! @ # $ % ^ & * ( ) _ + )
-@kb <<  %w( Q W E R T Y U I O P { } | )
-@kb <<   %w( A S D F G H J K L : " )
-@kb <<    %w( Z X C V B N M < > ? )
+@kb << %w( Q W E R T Y U I O P { } | )
+@kb << %w( A S D F G H J K L : " )
+@kb << %w( Z X C V B N M < > ? )
 
 @currkey = { col: 0, row: 0 }
 @shifton = false
@@ -253,11 +273,12 @@ end
 
 dirs = [ DIR_LEFT_TO_RIGHT, DIR_RIGHT_TO_LEFT, DIR_DIAGONAL_RIGHT_DOWN,
          DIR_DIAGONAL_RIGHT_UP, DIR_DIAGONAL_LEFT_DOWN, DIR_DIAGONAL_LEFT_UP]
-maxlen = [ 8, 8, 4, 4, 4, 4 ]
+maxshift = [ 8, 8, 4, 4, 4, 4 ]
+
 
 for dir in dirs do 
   puts "## -- #{dir} --"
-  for i in 0..maxlen[dir] do
+  for i in 0..maxshift[dir] do
     #parallelSequence(3, 4, dir, turnClockWise(dir), true, 0, i) ;
     #parallelSequence(3, 4, dir, turnCounterClockWise(dir), true, 0, i) ;
   end # i
@@ -265,8 +286,15 @@ end # dir in dirs
 
 # normal sequences
 for i in 0..8 do
-  parallelSequence(3, 4, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, true, 0, i) ;
+  for num in 0..4 do
+    for len in 0..6 do
+      if num*len >= @minlen and num*len <= @maxlen
+        parallelSequence(num, len, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, @useshift, 0, i) ;
+      end
+    end
+  end
 end
+exit
 for i in 0..6 do
   parallelSequence(3, 4, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, true, 1, i) ;
 end
