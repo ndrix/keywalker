@@ -8,10 +8,10 @@
 
 require 'getoptlong'
 
+puts "## -[ KeyWalker ]---"
+puts "## by @ndrix\n\n"
 
 def displayHelp()
-  puts "-[ KeyWalker ]---"
-  puts "by @ndrix\n\n"
   puts "Options:"
   puts "  --help | -h : this screen"
   puts "Password generation options"
@@ -75,10 +75,6 @@ end
 
 # print a summary
 
-puts "##                        _O/"
-puts "##   KeyWalker v1.0         \\"
-puts "##   by @ndrix              /\\_"
-puts "## _________________________\\_____"
 if @maxlen == @minlen
   puts "## of exactly #{@maxlen} characters"
 else
@@ -286,8 +282,9 @@ end # dir in dirs
 
 # normal sequences
 for i in 0..8 do
-  for num in 0..4 do
-    for len in 0..6 do
+  for num in (@minlen-1)..(@maxlen) do
+    for len in (@minlen-1)..(@maxlen) do
+      next if num*len < @minlen or num*len > @maxlen
       if num*len >= @minlen and num*len <= @maxlen
         parallelSequence(num, len, DIR_LEFT_TO_RIGHT, DIR_DIAGONAL_RIGHT_DOWN, @useshift, 0, i) ;
       end
